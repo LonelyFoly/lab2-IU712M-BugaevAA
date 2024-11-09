@@ -47,8 +47,9 @@
     }
     public class DateForm
     {
-        public DateTime start_date { get; set; }
-        public DateTime end_data { get; set; }
+        public Guid hotelUid { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
         public DateForm() { }
     }
     public class PaymentToDo

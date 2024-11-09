@@ -78,7 +78,26 @@ namespace reservation.Controllers
         {
             return Ok();
         }
-
+        [HttpPost("/api/v1/reservation")]
+        public IActionResult PostReservation([FromBody] reservationToDo res_)
+        {
+            if (!Request.Headers.TryGetValue("X-User-Name", out var username))
+            {
+                return BadRequest("X-User-Name header is missing.");
+            }
+            handler.PostReservation(res_);
+            return Ok(res);
+        }
+        [HttpDelete("/api/v1/reservation/{reservationUid}")]
+        public IActionResult CancelReservation(Guid reservationUid)
+        {
+            if (!Request.Headers.TryGetValue("X-User-Name", out var username))
+            {
+                return BadRequest("X-User-Name header is missing.");
+            }
+            reservation res = handler.cancelReservation(reservationUid, username);
+            return Ok(res);
+        }
 
 
 

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace loyalty.Controllers
 {
     [ApiController]
-
     public class LoyaltyController : ControllerBase
     {
         dbHandler handler;
@@ -36,8 +35,19 @@ namespace loyalty.Controllers
             }
             var loyalty = handler.incLoyalty(username);
             return Ok(loyalty);
+
         }
-        [HttpGet("/manage/health")]
+        [HttpPost("/api/v1/loyaltyDec")]
+        public IActionResult DecLoyalty()
+        {
+            if (!Request.Headers.TryGetValue("X-User-Name", out var username))
+            {
+                return BadRequest("X-User-Name header is missing.");
+            }
+            var loyalty = handler.decLoyalty(username);
+            return Ok(loyalty);
+        }
+            [HttpGet("/manage/health")]
         public IActionResult CheckHealth()
         {
             return Ok();

@@ -90,11 +90,10 @@ namespace gateway.Controllers
             return StatusCode((int)response.StatusCode, content);
         }
 
-        [HttpGet("/api/v1/hotels/{hotelUid}/{startDate}/{endDate}")]
-        public async Task<IActionResult> InfoHotel(DateTime startDate
-            , DateTime endDate, Guid hotelUid)
+        [HttpPost("/api/v1/reservations")]
+        public async Task<IActionResult> InfoHotel([FromBody] DateForm df)
         {
-            TimeSpan difference = startDate - endDate;
+            TimeSpan difference = df.endDate- df.startDate;
 
             // Получаем количество дней
             double totalDays = difference.TotalDays;
@@ -102,13 +101,14 @@ namespace gateway.Controllers
                 
             var client = _clientFactory.CreateClient();
             
-            var response = await client.GetAsync($"http://reservation:8060/api/v1/hotels/{hotelUid}");
+            var response = await client.GetAsync($"http://reservation:8060/api/v1/hotels/{df.hotelUid}");
             var content = await response.Content.ReadAsStringAsync();
 
 
 
             if (!response.IsSuccessStatusCode)
             {
+                Console.WriteLine("====response 1");
                 return NotFound();
             }
             hotel _hotel = JsonSerializer.Deserialize<hotel>(content);
@@ -117,27 +117,16 @@ namespace gateway.Controllers
             var content2 = await response2.Content.ReadAsStringAsync();
 
 
-            if (response2.IsSuccessStatusCode)
+            if (!response2.IsSuccessStatusCode)
             {
+                Console.WriteLine("====response 2");
                 return NotFound();
             }
                     
             loyalty _loyalty = JsonSerializer.Deserialize<loyalty>(content2);
-            double q = 0;
-            switch (_loyalty.status)
-            {
-                case "GOLD":
-                    q = 10;
-                    break;
-                case "BRONZE":
-                    q = 5;
-                    break;
-                case "SILVER":
-                    q = 7;
-                    break;
-                default:
-                    break;
-            }
+            double q = _loyalty.discount;
+            Console.WriteLine($"q = {q}, _hotel.price= {_hotel.price}," +
+                $"totalDays = {totalDays}");
             int price_sum = Convert.ToInt32 (
                 Math.Round((100 - q) * _hotel.price * totalDays)
                 );
@@ -146,19 +135,60 @@ namespace gateway.Controllers
             var json = JsonSerializer.Serialize(new PaymentToDo(payment_uid, price_sum));
 
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-            var response3 = await client.PostAsync($"http://payment:8050/api/v1/payment",
-                httpContent);
-            var content3 = await response2.Content.ReadAsStringAsync();
-            if (response3.IsSuccessStatusCode)
+            var response3 = await client.GetAsync($"http://payment:8050/api/v1/payment/{payment_uid}/{price_sum}");
+            var content3 = await response3.Content.ReadAsStringAsync();
+            if (!response3.IsSuccessStatusCode)
             {
+                Console.WriteLine("====response 3");
                 return NotFound();
             }
             var response4 = await client.GetAsync($"http://loyalty:8070/api/v1/loyaltyInc");
-            var content4 = await response2.Content.ReadAsStringAsync();
-            return Ok();
+            var content4 = await response4.Content.ReadAsStringAsync();
+            if (!response4.IsSuccessStatusCode)
+            {
+                Console.WriteLine("====response 4");
+                return NotFound();
+            }
+            
+            var response5 = await client.PostAsync($"http://reservation:8060/api/v1/loyaltyInc");
+            var content5 = await response5.Content.ReadAsStringAsync();
+            return Ok(content5);
             
         }
-        [HttpGet("api/v1/me")]
+        [HttpDelete("api/v1/reservations/{reservationUid}")]
+        public async Task<IActionResult> CancelReservation(Guid reservationUid)
+        {
+
+            var client = _clientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("X-User-Name", username);
+            var response = await client.DeleteAsync($"http://reservation:8060/api/v1/reservation/{reservationUid}");
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Reservation====response 1");
+                return NotFound();
+            }
+            reservation _res = JsonSerializer.Deserialize<reservation>(content);
+            client.DefaultRequestHeaders.Add("X-User-Name", username);
+            var response2 = await client.PatchAsync(
+                $"http://payment:8050/api/v1/payment/{_res.payment_uid}", null);
+            var content2 = await response2.Content.ReadAsStringAsync();
+
+
+            if (!response2.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Reservation====response 2");
+                return NotFound();
+            }
+
+            
+            var response4 = await client.GetAsync($"http://loyalty:8070/api/v1/loyaltyDec");
+            var content4 = await response4.Content.ReadAsStringAsync();
+            return Ok(content4);
+        }
+
+            [HttpGet("api/v1/me")]
         public async Task<IActionResult> ReservationMe()
         {
 

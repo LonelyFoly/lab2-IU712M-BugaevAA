@@ -40,12 +40,32 @@ namespace payment.DB
                          maxId = u.id;
                 }
                 payment _ = new payment();
-                _.id = maxId;
+                _.id = maxId+1;
                 _.payment_uid = payment_uid;
                 _.price = price;
                 _.status = "PAID";
+
                 db.payment.Add(_);
-                
+                db.SaveChanges();
+            }
+        }
+        public payment cancelPayment(Guid payment_uid)
+        {
+            using (ApplicationContext db = getDb())
+            {
+                var Payments = db.payment.ToList();
+
+                foreach (payment u in Payments)
+                {
+                    if (u.payment_uid == payment_uid)
+                    {
+                        u.status = "CANCELED";
+                        db.Update(u);
+                        db.SaveChanges();
+                        return u;
+                    }
+                }
+                return null;
             }
         }
 

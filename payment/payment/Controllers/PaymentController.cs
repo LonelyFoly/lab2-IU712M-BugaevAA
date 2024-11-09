@@ -28,11 +28,17 @@ namespace payment.Controllers
         {
             return Ok();
         }
-        [HttpPost("/api/v1/payment/{payment_uid}/{price}")]
+        [HttpGet("/api/v1/payment/{payment_uid}/{price}")]
         public IActionResult PostPayment(Guid payment_uid, int price)
         {
             handler.addPayment(payment_uid, price);
             return Ok();
+        }
+        [HttpPatch("/api/v1/payment/{payment_uid}")]
+        public IActionResult CancelPayment(Guid payment_uid)
+        {
+            payment _ = handler.cancelPayment(payment_uid);
+            return Ok(_);
         }
 
 
