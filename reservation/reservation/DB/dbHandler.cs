@@ -75,6 +75,21 @@ namespace reservation.DB
                 return reservation;
             }
         }
+        public hotel checkHotel(Guid hotelUid)
+        {
+            using (ApplicationContext db = getDb())
+            {
+                var Hotels = db.hotels.ToList();
+
+                foreach (hotel h in Hotels)
+                {
+                    //Console.WriteLine("Res.Username: " + res.username);
+                    if (h.hotel_uid == hotelUid)
+                        return h;
+                }
+                return null;
+            }
+        }
         //метод для обращеиня к loyalty для получения инфы о пользователе
 
 

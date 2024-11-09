@@ -23,6 +23,15 @@ namespace reservation.Controllers
             var hotels = handler.getHotels(page, size);
             return Ok(hotels);
         }
+        [HttpGet("/api/v1/hotels/{hotel_uuid}")]
+        public IActionResult CheckHotel(Guid hotel_uuid)
+        {
+            var hotel = handler.checkHotel(hotel_uuid);
+            if (hotel != null)
+                return Ok(hotel);
+            else
+                return NotFound();
+        }
         [HttpGet("/api/v1/reservations")]
         public IActionResult GetReservations()
         {
@@ -64,7 +73,11 @@ namespace reservation.Controllers
             };
             return Ok(result);
         }
-        
+        [HttpGet("/manage/health")]
+        public IActionResult CheckHealth()
+        {
+            return Ok();
+        }
 
 
 

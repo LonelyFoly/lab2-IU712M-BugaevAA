@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -25,21 +26,26 @@ namespace payment.DB
         {
              return new ApplicationContext();
         }
-        public payment getLoyalty(string username)
+        public void addPayment(Guid payment_uid, int price)
         {
             using (ApplicationContext db = getDb())
             {
-                // получаем объекты из бд и выводим на консоль
+                int maxId = 0;
                 var Payments = db.payment.ToList();
                 //Console.WriteLine("Persons list:");
 
                 foreach (payment u in Payments)
                 {
-                   /* if (u.username == username)
-                        return u;*/
-
+                    if (u.id > maxId)
+                         maxId = u.id;
                 }
-                return null;
+                payment _ = new payment();
+                _.id = maxId;
+                _.payment_uid = payment_uid;
+                _.price = price;
+                _.status = "PAID";
+                db.payment.Add(_);
+                
             }
         }
 

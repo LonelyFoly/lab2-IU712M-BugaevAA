@@ -45,4 +45,20 @@
 
         }
     }
+    public class DateForm
+    {
+        public DateTime start_date { get; set; }
+        public DateTime end_data { get; set; }
+        public DateForm() { }
+    }
+    public class PaymentToDo
+    {
+        public Guid payment_uid { get; set; }
+        public int price { get; set; }
+        public PaymentToDo() { }
+        public PaymentToDo(Guid _payment_uid, int _price) {
+            payment_uid = _payment_uid;
+            price = _price;
+        }
+    }
 }

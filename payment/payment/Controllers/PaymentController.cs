@@ -23,8 +23,18 @@ namespace payment.Controllers
             var loyalty = handler.getLoyalty(username);
             return Ok(loyalty);
         }*/
+        [HttpGet("/manage/health")]
+        public IActionResult CheckHealth()
+        {
+            return Ok();
+        }
+        [HttpPost("/api/v1/payment/{payment_uid}/{price}")]
+        public IActionResult PostPayment(Guid payment_uid, int price)
+        {
+            handler.addPayment(payment_uid, price);
+            return Ok();
+        }
 
-        
 
 
 
