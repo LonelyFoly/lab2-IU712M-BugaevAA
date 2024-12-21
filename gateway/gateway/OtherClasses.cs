@@ -59,6 +59,18 @@
             endDate = endDate_;
         }
     }
+    public class payment
+    {
+        public int id { get; set; }
+        public Guid paymentUid { get; set; }
+        public string status { get; set; }
+        public int price { get; set; }
+
+        public payment()
+        {
+
+        }
+    }
     public class DateForm
     {
         public Guid hotelUid { get; set; }
@@ -100,16 +112,5 @@
             endDate = endDate_;
         }
     }
-    public class payment
-    {
-        public int id { get; set; }
-        public Guid paymentUid { get; set; }
-        public string status { get; set; }
-        public int price { get; set; }
-
-        public payment()
-        {
-
-        }
-    }
+    
 }
