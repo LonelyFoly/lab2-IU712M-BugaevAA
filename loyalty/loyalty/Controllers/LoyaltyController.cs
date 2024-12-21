@@ -26,7 +26,7 @@ namespace loyalty.Controllers
             var loyalty = handler.getLoyalty(username);
             return Ok(loyalty);
         }
-        [HttpGet("/api/v1/loyaltyInc")]
+        [HttpPatch("/api/v1/loyaltyInc")]
         public IActionResult IncLoyalty()
         {
             if (!Request.Headers.TryGetValue("X-User-Name", out var username))
@@ -37,13 +37,16 @@ namespace loyalty.Controllers
             return Ok(loyalty);
 
         }
-        [HttpPost("/api/v1/loyaltyDec")]
+        [HttpPatch("/api/v1/loyaltyDecrease")]
         public IActionResult DecLoyalty()
         {
+            
             if (!Request.Headers.TryGetValue("X-User-Name", out var username))
             {
+                
                 return BadRequest("X-User-Name header is missing.");
             }
+
             var loyalty = handler.decLoyalty(username);
             return Ok(loyalty);
         }

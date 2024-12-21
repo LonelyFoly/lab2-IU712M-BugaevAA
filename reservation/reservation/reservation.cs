@@ -5,13 +5,13 @@ namespace reservation
     public class reservation
     {
         public int id { get; set; }
-        public Guid reservation_uid { get; set; }
+        public Guid reservationUid { get; set; }
         public string username { get; set; }
-        public Guid payment_uid { get; set; }
-        public int hotel_id { get; set; }
+        public Guid paymentUid { get; set; }
+        public Guid hotelUid { get; set; }
         public string status { get; set; }
-        public DateTime start_date { get; set; }
-        public DateTime end_data { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
 
         public reservation()
         {
@@ -20,13 +20,13 @@ namespace reservation
     }
     public class reservationToDo
     {
-        public Guid reservation_uid { get; set; }
+        public Guid reservationUid { get; set; }
         public string username { get; set; }
-        public Guid payment_uid { get; set; }
-        public int hotel_id { get; set; }
+        public Guid paymentUid { get; set; }
+        public Guid hotelUid { get; set; }
         public string status { get; set; }
-        public DateTime start_date { get; set; }
-        public DateTime end_data { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime endDate{ get; set; }
 
         public reservationToDo()
         {

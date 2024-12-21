@@ -17,9 +17,10 @@ namespace reservation.Controllers
             handler = new dbHandler(null);
         }
 
-        [HttpGet("/api/v1/hotels&page={page}&size={size}")]
-        public IActionResult GetHotels(int page= 1, int size = 10)
+        [HttpGet("/api/v1/hotels")]
+        public async Task<IActionResult> GetHotels([FromQuery] int page, [FromQuery] int size)
         {
+
             var hotels = handler.getHotels(page, size);
             return Ok(hotels);
         }
@@ -65,13 +66,8 @@ namespace reservation.Controllers
             }
             
             var reservations = handler.getReservationsByUsername(username);
-            string status = "GOLD";
-            var result = new
-            {
-                reservations, // Добавляем весь объект класса
-                status // Добавляем отдельную переменную
-            };
-            return Ok(result);
+
+            return Ok(reservations);
         }
         [HttpGet("/manage/health")]
         public IActionResult CheckHealth()
@@ -79,20 +75,22 @@ namespace reservation.Controllers
             return Ok();
         }
         [HttpPost("/api/v1/reservation")]
-        public IActionResult PostReservation([FromBody] reservationToDo res_)
+        public IActionResult PostReservation([FromBody] reservation res_)
         {
             if (!Request.Headers.TryGetValue("X-User-Name", out var username))
             {
                 return BadRequest("X-User-Name header is missing.");
             }
-            handler.PostReservation(res_);
-            return Ok(res);
+            handler.PostReservation(res_, username);
+            return NoContent();
         }
-        [HttpDelete("/api/v1/reservation/{reservationUid}")]
+        [HttpPatch("/api/v1/reservation/{reservationUid}")]
         public IActionResult CancelReservation(Guid reservationUid)
         {
+            Console.WriteLine("G");
             if (!Request.Headers.TryGetValue("X-User-Name", out var username))
             {
+                Console.WriteLine("Error: /api/v1/reservation/{reservationUid}");
                 return BadRequest("X-User-Name header is missing.");
             }
             reservation res = handler.cancelReservation(reservationUid, username);

@@ -57,14 +57,14 @@ namespace loyalty.DB
                     if (u.username == username)
                     {
                         _ = u;
-                        _.reservation_count++;
+                        _.reservationCount++;
 
-                        if (_.reservation_count >= 20)
+                        if (_.reservationCount >= 20)
                         {
                             _.status = "GOLD";
                             _.discount = 10;
                         }
-                        else if (_.reservation_count >= 10)
+                        else if (_.reservationCount >= 10)
                         {
                             _.status = "SILVER";
                             _.discount = 7;
@@ -79,6 +79,7 @@ namespace loyalty.DB
                 return null;
             }
         }
+        //add check for PAID status
         public loyalty decLoyalty(string username)
         {
             using (ApplicationContext db = getDb())
@@ -87,24 +88,29 @@ namespace loyalty.DB
                 var Loyalties = db.loyalty.ToList();
                 //Console.WriteLine("Persons list:");
                 loyalty _;
+                Console.WriteLine("UsernameReal: " + username);
                 foreach (loyalty u in Loyalties)
                 {
+                    Console.WriteLine("Loy_username: "+u.username);
                     if (u.username == username)
                     {
+                        Console.WriteLine(u.username);
+                        
                         _ = u;
-                        _.reservation_count--;
-
-                        if (_.reservation_count >= 20)
+                        Console.WriteLine(_.reservationCount);
+                        _.reservationCount--;
+                        Console.WriteLine(_.reservationCount);
+                        if (_.reservationCount >= 20)
                         {
                             _.status = "GOLD";
                             _.discount = 10;
                         }
-                        else if (_.reservation_count >= 10)
+                        else if (_.reservationCount >= 10)
                         {
                             _.status = "SILVER";
                             _.discount = 7;
                         }
-                        else if(_.reservation_count < 10)
+                        else if(_.reservationCount < 10)
                         {
                             _.status = "BRONZE";
                             _.discount = 5;

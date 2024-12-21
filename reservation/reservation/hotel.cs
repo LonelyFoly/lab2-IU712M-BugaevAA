@@ -5,7 +5,7 @@ namespace reservation
     public class hotel
     {
         public int id { get; set; }
-        public Guid hotel_uid { get; set; }
+        public Guid hotelUid { get; set; }
         public string name { get; set; }
         public string country { get; set; }
         public string city { get; set; }

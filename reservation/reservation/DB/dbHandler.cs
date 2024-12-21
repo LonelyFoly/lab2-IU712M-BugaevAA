@@ -30,12 +30,13 @@ namespace reservation.DB
             using (ApplicationContext db = getDb())
             {
                 var Hotels = db.hotels.ToList();
-
+                //Console.WriteLine(Hotels.Count());
                 List<hotel> hotels = new List<hotel>();
                 for (int i = (page-1)*size;
                     (i<Hotels.Count() && i<page*size);i++)
                 {
                         hotel u = Hotels[i];
+                        Console.WriteLine(u.hotelUid);
                         hotels.Add(u);
                 }
                 return hotels.ToArray();
@@ -69,7 +70,7 @@ namespace reservation.DB
                 foreach (reservation res in Reservations)
                 {
                     //Console.WriteLine("Res.Username: " + res.username);
-                    if (res.username == username && res.reservation_uid==reservationUid)
+                    if (res.username == username && res.reservationUid==reservationUid)
                         reservation = res;
                 }
                 return reservation;
@@ -84,7 +85,7 @@ namespace reservation.DB
                 foreach (hotel h in Hotels)
                 {
                     //Console.WriteLine("Res.Username: " + res.username);
-                    if (h.hotel_uid == hotelUid)
+                    if (h.hotelUid == hotelUid)
                         return h;
                 }
                 return null;
@@ -92,6 +93,7 @@ namespace reservation.DB
         }
         public reservation cancelReservation(Guid reservationUid, string username)
         {
+            
             using (ApplicationContext db = getDb())
             {
                 var Reservations = db.reservation.ToList();
@@ -99,12 +101,12 @@ namespace reservation.DB
                 foreach (reservation res in Reservations)
                 {
                     //Console.WriteLine("Res.Username: " + res.username);
-                    if (res.reservation_uid == reservationUid 
+                    if (res.reservationUid == reservationUid 
                         && res.username == username)
 
                     {
                         res.status = "CANCELED";
-                        db.Update(res);
+                        db.reservation.Update(res);
                         db.SaveChanges();
                         return res;
                     }
@@ -112,7 +114,7 @@ namespace reservation.DB
                 return null;
             }
         }
-        public void PostReservation(reservationToDo res_)
+        public void PostReservation(reservation res_, string username)
         {
             using (ApplicationContext db = getDb())
             {
@@ -128,15 +130,17 @@ namespace reservation.DB
                     }
                 }
                 reservation new_res = new reservation();
-                new_res.start_date = res_.start_date;
-                new_res.end_data = res_.end_data;
+                new_res.startDate = res_.startDate.ToUniversalTime();
+                new_res.endDate = res_.endDate.ToUniversalTime();
                 new_res.status = res_.status;
                 new_res.id = maxId + 1;
-                new_res.hotel_id = res_.hotel_id;
-                new_res.payment_uid = res_.payment_uid;
-                new_res.reservation_uid = res_.reservation_uid;
+                new_res.hotelUid = res_.hotelUid;
+                new_res.paymentUid = res_.paymentUid;
+                new_res.reservationUid = res_.reservationUid;
+                new_res.username = username;
 
-
+                db.reservation.Add(new_res);
+                db.SaveChanges();
             }
         }
         //метод для обращеиня к loyalty для получения инфы о пользователе

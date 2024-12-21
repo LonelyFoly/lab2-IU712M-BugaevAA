@@ -4,7 +4,7 @@
     {
         public int id { get; set; }
         public string username { get; set; }
-        public int reservation_count { get; set; }
+        public int reservationCount { get; set; }
         public string status { get; set; }
         public int discount { get; set; }
 
@@ -16,7 +16,7 @@
     public class hotel
     {
         public int id { get; set; }
-        public Guid hotel_uid { get; set; }
+        public Guid hotelUid { get; set; }
         public string name { get; set; }
         public string country { get; set; }
         public string city { get; set; }
@@ -32,17 +32,31 @@
     public class reservation
     {
         public int id { get; set; }
-        public Guid reservation_uid { get; set; }
+        public Guid reservationUid { get; set; }
         public string username { get; set; }
-        public Guid payment_uid { get; set; }
-        public int hotel_id { get; set; }
+        public Guid paymentUid { get; set; }
+        public Guid hotelUid { get; set; }
         public string status { get; set; }
-        public DateTime start_date { get; set; }
-        public DateTime end_data { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
 
         public reservation()
         {
 
+        }
+        public reservation(
+            Guid reservationUid_,
+        string username_, Guid paymentUid_, Guid hotelUid_,
+        string status_, DateTime startDate_, DateTime endDate_
+            )
+        {
+            reservationUid = reservationUid_;
+            this.username = username_;
+            paymentUid = paymentUid_;
+            hotelUid = hotelUid_;
+            this.status = status_;
+            startDate = startDate_;
+            endDate = endDate_;
         }
     }
     public class DateForm
@@ -54,12 +68,48 @@
     }
     public class PaymentToDo
     {
-        public Guid payment_uid { get; set; }
+        public Guid paymentUid { get; set; }
         public int price { get; set; }
         public PaymentToDo() { }
-        public PaymentToDo(Guid _payment_uid, int _price) {
-            payment_uid = _payment_uid;
+        public PaymentToDo(Guid _paymentUid, int _price) {
+            paymentUid = _paymentUid;
             price = _price;
+        }
+    }
+    public class ReservationToDo
+    {
+        public Guid reservationUid { get; set; }
+        public string username { get; set; }
+        public Guid paymentUid { get; set; }
+        public int hotelUid { get; set; }
+        public string status { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
+        public ReservationToDo( 
+            Guid reservationUid_,
+        string username_,Guid paymentUid_, int hotelId_,
+        string status_, DateTime startDate_, DateTime endDate_
+            )
+        {
+            reservationUid = reservationUid_;
+            this.username = username_;
+            paymentUid = paymentUid_;
+            hotelUid = hotelId_;
+            this.status = status_;
+            startDate = startDate_;
+            endDate = endDate_;
+        }
+    }
+    public class payment
+    {
+        public int id { get; set; }
+        public Guid paymentUid { get; set; }
+        public string status { get; set; }
+        public int price { get; set; }
+
+        public payment()
+        {
+
         }
     }
 }

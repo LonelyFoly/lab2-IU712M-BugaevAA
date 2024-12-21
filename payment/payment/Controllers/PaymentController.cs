@@ -17,27 +17,30 @@ namespace payment.Controllers
             handler = new dbHandler(null);
         }
 
-        /*[HttpGet("/api/v1/loyalty")]
-        public IActionResult GetLoyalty(string username)
-        {
-            var loyalty = handler.getLoyalty(username);
-            return Ok(loyalty);
-        }*/
         [HttpGet("/manage/health")]
         public IActionResult CheckHealth()
         {
             return Ok();
         }
-        [HttpGet("/api/v1/payment/{payment_uid}/{price}")]
-        public IActionResult PostPayment(Guid payment_uid, int price)
+        [HttpPost("/api/v1/payment")]
+        public IActionResult PostPayment([FromBody] PaymentRequestDto request)
         {
-            handler.addPayment(payment_uid, price);
+            Console.WriteLine($"{request.paymentUid}, {request.price}");
+            handler.addPayment(request.paymentUid, request.price);
             return Ok();
         }
-        [HttpPatch("/api/v1/payment/{payment_uid}")]
-        public IActionResult CancelPayment(Guid payment_uid)
+        [HttpPatch("/api/v1/payment/{paymentUid}")]
+        public IActionResult CancelPayment(Guid paymentUid)
         {
-            payment _ = handler.cancelPayment(payment_uid);
+            payment _ = handler.cancelPayment(paymentUid);
+            //Console.WriteLine("Payment UID: "+paymentUid.ToString());
+            return Ok(_);
+        }
+        [HttpGet("/api/v1/payment/{paymentUid}")]
+        public IActionResult GetPayment(Guid paymentUid)
+        {
+            payment _ = handler.getPayment(paymentUid);
+            //Console.WriteLine("Payment UID: "+paymentUid.ToString());
             return Ok(_);
         }
 

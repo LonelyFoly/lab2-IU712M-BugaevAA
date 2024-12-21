@@ -26,7 +26,7 @@ namespace payment.DB
         {
              return new ApplicationContext();
         }
-        public void addPayment(Guid payment_uid, int price)
+        public void addPayment(Guid paymentUid, int price)
         {
             using (ApplicationContext db = getDb())
             {
@@ -41,7 +41,7 @@ namespace payment.DB
                 }
                 payment _ = new payment();
                 _.id = maxId+1;
-                _.payment_uid = payment_uid;
+                _.paymentUid = paymentUid;
                 _.price = price;
                 _.status = "PAID";
 
@@ -49,7 +49,8 @@ namespace payment.DB
                 db.SaveChanges();
             }
         }
-        public payment cancelPayment(Guid payment_uid)
+        //add check for PAID status
+        public payment cancelPayment(Guid paymentUid)
         {
             using (ApplicationContext db = getDb())
             {
@@ -57,11 +58,29 @@ namespace payment.DB
 
                 foreach (payment u in Payments)
                 {
-                    if (u.payment_uid == payment_uid)
+                    if (u.paymentUid == paymentUid)
                     {
                         u.status = "CANCELED";
-                        db.Update(u);
+                        db.payment.Update(u);
                         db.SaveChanges();
+                        return u;
+                    }
+                }
+                return null;
+            }
+        }
+
+        public payment getPayment(Guid paymentUid)
+        {
+            using (ApplicationContext db = getDb())
+            {
+                var Payments = db.payment.ToList();
+
+                foreach (payment u in Payments)
+                {
+                    if (u.paymentUid == paymentUid)
+                    {
+                       
                         return u;
                     }
                 }
