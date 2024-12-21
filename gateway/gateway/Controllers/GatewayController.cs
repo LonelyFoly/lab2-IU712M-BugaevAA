@@ -23,11 +23,7 @@ namespace gateway.Controllers
             username = "Test Max";
         }
 
-        [HttpGet("/manage/health")]
-        public IActionResult CheckHealth()
-        {
-            return Ok();
-        }
+
         [HttpGet("/api/v1/hotels")]
         public async Task<IActionResult> ProxyReservationService([FromQuery] int page, [FromQuery] int size)
         {
