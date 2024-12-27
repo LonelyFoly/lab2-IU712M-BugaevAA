@@ -30,25 +30,24 @@ jobs:
           ./scripts/wait-script.sh
         env:
           WAIT_PORTS: 8080,8070,8060,8050
-  unit-tests:
+  tests:
         name: Run xUnit tests
 	needs: build
-        run: dotnet test net/Lab1.sln --no-build --configuration Release
-  api-test:
-        name: Run API Tests
-        uses: matt-ball/newman-action@master
-        with:
-          # TODO insert your variant
-          collection: v2/postman/collection.json
-          environment: v2/postman/environment.json
-          delayRequest: 100
-          reporters: '[ "cli" ]'
+	steps:
+	  - name test
+          run: dotnet test gateway/gateway.sln --no-build --configuration Release
 
-      - uses: education/autograding@v1
-        id: autograder
-        continue-on-error: true
-  final:
-        name: Stop containers
-        if: always()
-        continue-on-error: true
-        run: docker compose down -v
+	  - name: api tests
+	  uses: matt-ball/newman-action@master
+	  with:
+              # TODO insert your variant
+              collection: v2/postman/collection.json
+              environment: v2/postman/environment.json
+              delayRequest: 100
+              reporters: '[ "cli" ]'
+
+
+	  - name: Stop containers
+	  if: always()
+	  continue-on-error: true
+          run: docker compose down -v
