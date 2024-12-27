@@ -370,22 +370,13 @@ namespace gateway.Controllers
             return NoContent();
         }
 
-            [HttpGet("api/v1/me")]
+        [HttpGet("api/v1/me")]
         public async Task<IActionResult> ReservationMe()
         {
-
-/*            var client = _clientFactory.CreateClient();
-            client.DefaultRequestHeaders.Add("X-User-Name", username);
-            var response = await client.GetAsync($"http://reservation:8060/api/v1/me");
-            var content = await response.Content.ReadFromJsonAsync<reservation[]>();*/
-
-
             var client = _clientFactory.CreateClient();
             client.DefaultRequestHeaders.Add("X-User-Name", username);
             var response = await client.GetAsync($"http://reservation:8060/api/v1/reservations");
             var content = await response.Content.ReadFromJsonAsync<reservation[]>();
-
-            //
 
             var _hotels = new Dictionary<string, hotel>();
             var _payments = new Dictionary<string, payment>();

@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY *.sln .
 COPY gateway/*.csproj ./gateway/
+COPY HotelService.UnitTests/*.csproj ./HotelService.UnitTests/
 RUN dotnet restore
 
 COPY . .
