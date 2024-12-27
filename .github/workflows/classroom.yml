@@ -30,24 +30,25 @@ jobs:
           ./scripts/wait-script.sh
         env:
           WAIT_PORTS: 8080,8070,8060,8050
+
   tests:
-        name: Run xUnit tests
-	needs: build
-	steps:
-	  - name test
-          run: dotnet test gateway/gateway.sln --no-build --configuration Release
+    name: Run xUnit tests
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test
+        run: dotnet test gateway/gateway.sln --no-build --configuration Release
 
-	  - name: api tests
-	  uses: matt-ball/newman-action@master
-	  with:
-              # TODO insert your variant
-              collection: v2/postman/collection.json
-              environment: v2/postman/environment.json
-              delayRequest: 100
-              reporters: '[ "cli" ]'
+      - name: API tests
+        uses: matt-ball/newman-action@master
+        with:
+          # TODO insert your variant
+          collection: v2/postman/collection.json
+          environment: v2/postman/environment.json
+          delayRequest: 100
+          reporters: '[ "cli" ]'
 
-
-	  - name: Stop containers
-	  if: always()
-	  continue-on-error: true
-          run: docker compose down -v
+      - name: Stop containers
+        if: always()
+        continue-on-error: true
+        run: docker compose down -v
