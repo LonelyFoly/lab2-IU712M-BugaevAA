@@ -7,90 +7,6 @@ on:
     branches:
       - master
 jobs:
-
-  setup-database:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: postgres
-        ports:
-          - 5438:5432
-        options: >-
-          --health-cmd="pg_isready -h localhost -U postgres"
-          --health-timeout=30s
-          --health-retries=3
-
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2
-
-      - name: Install PostgreSQL client
-        run: sudo apt-get install postgresql-client
-
-      - name: Wait for PostgreSQL to be ready
-        run: |
-          until pg_isready -h localhost -U postgres; do
-            echo "Waiting for postgres to be ready..."
-            sleep 2
-          done
-
-      - name: Create tables and insert data
-        run: |
-          psql -h localhost -U postgres -d test_db -c "
-          CREATE TABLE loyalty (
-            id SERIAL PRIMARY KEY,
-            username VARCHAR(255) NOT NULL,
-            reservationCount INT NOT NULL,
-            status VARCHAR(50) NOT NULL,
-            discount INT NOT NULL
-          );
-
-          CREATE TABLE hotel (
-            id SERIAL PRIMARY KEY,
-            hotelUid UUID NOT NULL,
-            name VARCHAR(255) NOT NULL,
-            country VARCHAR(100) NOT NULL,
-            city VARCHAR(100) NOT NULL,
-            address VARCHAR(255) NOT NULL,
-            stars INT NOT NULL,
-            price INT NOT NULL
-          );
-
-          CREATE TABLE reservation (
-            id SERIAL PRIMARY KEY,
-            reservationUid UUID NOT NULL,
-            username VARCHAR(255) NOT NULL,
-            paymentUid UUID NOT NULL,
-            hotelUid UUID NOT NULL,
-            status VARCHAR(50) NOT NULL,
-            startDate DATE NOT NULL,
-            endDate DATE NOT NULL
-          );
-
-          CREATE TABLE payment (
-            id SERIAL PRIMARY KEY,
-            paymentUid UUID NOT NULL,
-            status VARCHAR(50) NOT NULL,
-            price INT NOT NULL
-          );
-
-          -- Insert test data for hotels
-          INSERT INTO hotel (id, hotelUid, name, country, city, address, stars, price)
-          VALUES
-            (1, '049161bb-badd-4fa8-9d90-87c9a82b0668', 'Ararat Park Hyatt Moscow', 'Россия', 'Москва', 'Неглинная ул., 4', 5, 10000);
-
-          -- Insert test data for loyalty
-          INSERT INTO loyalty (id, username, reservationCount, status, discount)
-          VALUES
-            (1, 'Test Max', 25, 'GOLD', 10);
-          "
-
-
   build:
     name: Autograding
     runs-on: ubuntu-latest
@@ -128,6 +44,15 @@ jobs:
         id: autograder
         continue-on-error: true
 
+      - name: Github auto grader mark
+        uses: Romanow/google-sheet-autograder-marker@v1.0
+        with:
+          google_token: ${{secrets.GOOGLE_API_KEY}}
+          sheet_id: "1xkgjUX6Qmk7rdJG-QPOToav-HWWtthJjnShIKnw3oIY"
+          homework_number: 2
+          user_column: 'D'
+          column_offset: 'F'
+          mark: "'+"
 
       - name: Stop containers
         if: always()
