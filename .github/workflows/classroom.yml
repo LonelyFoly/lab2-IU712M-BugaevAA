@@ -36,6 +36,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Debug paths
+        run: ls -R ./gateway/
+      - name: Debug paths2
+        run: ls -R ./gateway/HotelService.UnitTests/
       - name: Build Test Project
         run: dotnet build ./gateway/HotelService.UnitTests/HotelService.UnitTests.csproj --configuration Release
 
