@@ -31,11 +31,7 @@ jobs:
         env:
           WAIT_PORTS: 8080,8070,8060,8050
 
-  tests:
-    name: Run xUnit tests
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
+
       - name: Print current directory
         run: pwd
 
