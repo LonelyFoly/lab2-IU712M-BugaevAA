@@ -31,11 +31,11 @@ jobs:
         env:
           WAIT_PORTS: 8080,8070,8060,8050
   unit-tests:
-    - name: Run xUnit tests
+        name: Run xUnit tests
 	needs: build
         run: dotnet test net/Lab1.sln --no-build --configuration Release
   api-test:
-      - name: Run API Tests
+        name: Run API Tests
         uses: matt-ball/newman-action@master
         with:
           # TODO insert your variant
@@ -47,8 +47,8 @@ jobs:
       - uses: education/autograding@v1
         id: autograder
         continue-on-error: true
-
-      - name: Stop containers
+  final:
+        name: Stop containers
         if: always()
         continue-on-error: true
         run: docker compose down -v
